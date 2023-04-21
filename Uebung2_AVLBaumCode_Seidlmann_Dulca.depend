@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1682070648 source:c:\users\mrsnow\documents\bachelor fhtw\semester 2\algorythmen und datenstrukturen\uebung2_avlbaumcode_seidlmann_dulca\main.cpp
+	<iostream>
+	<fstream>
+
