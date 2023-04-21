@@ -31,9 +31,22 @@ void traverse(Node* root) {
     }
 }
 
+
 int main() {
+    string command, filename;
+    cout << "Please enter the command in the format: treecheck filename" << endl;
+    cin >> command >> filename;
+    if (command != "treecheck") {
+        cout << "Invalid command: " << command << endl;
+        return 1;
+    }
+
     Node* root = nullptr;
-    ifstream file("input.txt");
+    ifstream file(filename);
+    if (file.peek() == ifstream::traits_type::eof()) {
+        cout << "File is empty." << endl;
+        return 1;
+    }
     int key;
     while (file >> key) {
         root = insert(root, key);
@@ -42,4 +55,5 @@ int main() {
     traverse(root);
     return 0;
 }
+
 
