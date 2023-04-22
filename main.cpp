@@ -74,11 +74,47 @@ bool checkAVL(Node* root) {
     return isAVL;
 }
 
+void search(Node* root, int key) {
+    Node* node = root;
+    vector<int> path;
+    while (node != nullptr) {
+        path.push_back(node->key);
+        if (node->key == key) {
+            cout << key << " found ";
+            for (int i = 0; i < path.size() - 1; i++) {
+                cout << path[i] << ", ";
+            }
+            cout << endl;
+            return;
+        } else if (node->key < key) {
+            node = node->right;
+        } else {
+            node = node->left;
+        }
+    }
+    cout << key << " not found!" << endl;
+}
+
+bool searchSubtree(Node* root, Node* subtree) {
+    if (subtree == nullptr) {
+        return true;
+    }
+    if (root == nullptr) {
+        return false;
+    }
+    if (root->key != subtree->key) {
+        return false;
+    }
+    return searchSubtree(root->left, subtree->left) && searchSubtree(root->right, subtree->right);
+}
+
 
 int main() {
     string command, filename;
-    cout << "Please enter the command in the format: treecheck filename" << endl;
+    cout << "Please enter the command in the format: treecheck filename searchValue" << endl;
     cin >> command >> filename;
+    int searchValue;
+    cin >> searchValue;
     if (command != "treecheck") {
         cout << "Invalid command: " << command << endl;
         return 1;
@@ -95,6 +131,14 @@ int main() {
         root = insert(root, key);
     }
     file.close();
+
+    Node* result = search(root, searchValue);
+    if (result != nullptr) {
+        cout << "Found value " << searchValue << " in tree." << endl;
+    } else {
+        cout << "Could not find value " << searchValue << " in tree." << endl;
+    }
+
     traverse(root);
     cout << endl;
     bool isAVL = checkAVL(root);
