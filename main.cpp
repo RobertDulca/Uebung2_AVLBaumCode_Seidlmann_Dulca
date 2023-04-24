@@ -2,6 +2,8 @@
 #include <fstream>
 #include <cmath>
 #include <vector>
+#include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -74,7 +76,7 @@ bool checkAVL(Node* root) {
     return isAVL;
 }
 
-void search(Node* root, int key) {
+Node* search(Node* root, int key) {
     Node* node = root;
     vector<int> path;
     while (node != nullptr) {
@@ -85,7 +87,7 @@ void search(Node* root, int key) {
                 cout << path[i] << ", ";
             }
             cout << endl;
-            return;
+            return node;
         } else if (node->key < key) {
             node = node->right;
         } else {
@@ -102,10 +104,10 @@ bool searchSubtree(Node* root, Node* subtree) {
     if (root == nullptr) {
         return false;
     }
-    if (root->key != subtree->key) {
-        return false;
+    if (root->key == subtree->key) {
+        return searchSubtree(root->left, subtree->left) && searchSubtree(root->right, subtree->right);
     }
-    return searchSubtree(root->left, subtree->left) && searchSubtree(root->right, subtree->right);
+    return searchSubtree(root->left, subtree) || searchSubtree(root->right, subtree);
 }
 
 
@@ -142,15 +144,42 @@ int main() {
     traverse(root);
     cout << endl;
     bool isAVL = checkAVL(root);
-    for (int i = size(TreeList)-1; i >= 0; --i) {
+    for (int i = TreeList.size()-1; i >= 0; --i) {
         cout << "Node " << TreeList[i].first << ": balance factor = " << TreeList[i].second << endl;
     }
     if (isAVL) {
-        cout << "AVL : yes"<< endl;
+        cout << "AVL : yes" << endl;
     } else {
         cout << "AVL: no" << endl;
     }
-    float avgKeys = static_cast<float> (sumKeys)/ static_cast<float>(size(TreeList));
-    cout<< "min: "<<minKey<<", max: "<<maxKey<<", avg: "<< avgKeys;
+    float avgKeys = static_cast<float>(sumKeys) / static_cast<float>(TreeList.size());
+    cout << "min: " << minKey << ", max: " << maxKey << ", avg: " << avgKeys;
+
+    string subtree_filename;
+    cout << "\nEnter the subtree filename: ";
+    cin >> subtree_filename;
+
+    string subtree_filepath = subtree_filename + ".txt";
+
+    ifstream subtree_input(subtree_filepath);
+    if (!subtree_input) {
+        cerr << "\nError opening file: " << subtree_filename << endl;
+        return 1;
+    }
+
+    Node* subtree_root = nullptr;
+    int subtree_key;
+    while (subtree_input >> subtree_key) {
+        subtree_root = insert(subtree_root, subtree_key);
+    }
+    subtree_input.close();
+
+    if (!searchSubtree(root, subtree_root)) {
+        cout << "\nSubtree not found!" << endl;
+    }
+    else{
+        cout << "\nSubtree found!" << endl;
+    }
+
     return 0;
 }
